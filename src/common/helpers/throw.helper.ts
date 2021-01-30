@@ -1,8 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { ResponseMessage } from '@app/common/langs/en'
 
 export const customThrowError = (
-  message: ResponseMessage,
+  message: string,
   code: HttpStatus,
   errorCode?: string,
   error?: Error,

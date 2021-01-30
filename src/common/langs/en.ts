@@ -4,6 +4,7 @@ export const Info = {
 }
 
 export const ResponseMessage = {
+  NOT_FOUND: 'Not found.',
   INCORRECT_PASSWORD: 'Incorrect password.',
   INVALID_CREDENTIAL: 'Invalid credential.',
   NOT_EXIST_USER: 'This user is not exist.',

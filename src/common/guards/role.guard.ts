@@ -29,7 +29,6 @@ export class RoleAuthenticationGuard implements CanActivate {
       context.getClass(),
     );
 
-    console.log(isPublic, allowRoles)
     if (isPublic) {
       return true;
     }

@@ -10,6 +10,7 @@ import { RoleAuthenticationGuard } from './common/guards/role.guard';
 import { UserService } from './modules/user/user.service';
 import { UserModule } from './modules/user/user.module';
 import { FormatResponseInterceptor } from './common/interceptors/response.interceptor';
+import { AllExceptionsFilter } from './common/filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,14 +23,17 @@ async function bootstrap() {
   app.use(morgan('dev'));
 
   // register validation pipe with custom error formatting factory
-  app.useGlobalPipes(new ValidationPipe({
-    exceptionFactory: validationExceptionFactory,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: validationExceptionFactory,
+    }),
+  );
 
   // register interceptor
-  app.useGlobalInterceptors(
-    new FormatResponseInterceptor(),
-  );
+  app.useGlobalInterceptors(new FormatResponseInterceptor());
+
+  // register exception filter
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // register role guard (check user role) to global
   const userService = app.select(UserModule).get(UserService);

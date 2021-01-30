@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { messages } from './common/i18n/en/messages';
+import { Info } from './common/langs/en';
 
 @Injectable()
 export class AppService {
   getHello(): any {
     return {
-      name: messages.appName,
-      message: messages.apidocs.general.helloWorld,
+      author: Info.AUTHOR,
+      message: Info.MESSAGE,
     };
   }
 }

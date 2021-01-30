@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
-import { messages } from '@app/common/i18n/en/messages';
+import { messages } from '@app/common/langs/en';
 
 describe('AppController (e2e)', () => {
   let app;
@@ -25,7 +25,7 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect({
         name: messages.appName,
-        message: messages.apidocs.general.helloWorld,
+        message: messages.apidocs.general.hello,
       });
   });
 });

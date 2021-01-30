@@ -1,14 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, SetMetadata } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiOperation } from '@nestjs/swagger';
-import { messages } from './common/i18n/en/messages';
+import { ApiTags } from '@nestjs/swagger';
+import { METADATA } from './common/enums/metadata.enum';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @ApiTags('Intro')
+  @SetMetadata(METADATA.IS_PUBLIC, true)
   @Get()
-  @ApiOperation({ title: messages.apidocs.general.helloWorld})
   getHello(): any {
     return this.appService.getHello();
   }

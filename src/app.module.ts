@@ -1,38 +1,48 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from './config/config.module';
-import { ConfigService } from './config/config.service';
+import { AuthenticateMiddleware } from '@app/common/middlewares/authentication.middleware';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TokenHelper } from './common/helpers/token.helper';
+
+const env = process.env.NODE_ENV || 'development';
+const envFilePath =
+  env === 'development' ? '.env' : `.env${process.env.NODE_ENV}`;
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        return ({
+        return {
           type: 'postgres',
-          host: configService.databaseHost,
-          port: configService.databasePort,
-          username: configService.databaseUsername,
-          password: configService.databasePassword,
-          database: configService.databaseName,
-          entities: [
-            'src/**/**.entity{.ts,.js}',
-          ],
-          dropSchema: configService.dropSchema,
-          synchronize: configService.databaseSyncronize,
-        });
+          host: configService.get('DB_HOST'),
+          port: +configService.get<number>('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database:configService.get('DB_NAME'),
+          entities: ['src/**/**.entity{.ts,.js}'],
+        };
       },
       inject: [ConfigService],
     }),
     UserModule,
     AuthModule,
+    
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [ AppService, TokenHelper ],
 })
 
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AuthenticateMiddleware).forRoutes('*');
+  }
+}

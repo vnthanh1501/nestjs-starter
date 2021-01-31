@@ -26,6 +26,12 @@ export class User extends Common {
   @Column({default: USER_ROLE.NORMAL})
   role: USER_ROLE;
 
+  @Column({ default: true })
+  isVerified: boolean;
+
+  @Column({ default: false })
+  isBanned: boolean;
+
   @Column({ select: false, nullable: true })
   passwordResetToken: string;
 

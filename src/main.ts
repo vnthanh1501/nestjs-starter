@@ -53,6 +53,7 @@ async function bootstrap() {
 
   // start the app
   await app.listen(configService.get('APP_PORT'));
+  console.log(`Listening on port ${configService.get('APP_PORT')}`)
 }
 
 bootstrap();

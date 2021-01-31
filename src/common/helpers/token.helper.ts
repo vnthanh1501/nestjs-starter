@@ -17,12 +17,14 @@ export class TokenHelper {
     try {
       const token = jwt.sign(
         { ...data, 
-          iat: Math.floor(Date.now() / 1000) 
+          iat: Math.floor(Date.now() / 1000),
+          type: TOKEN_TYPE.LOGIN
         },
         this.secret,
       );
       return token;
     } catch (error) {
+      console.log(error)
       customThrowError(ResponseMessage.INVALID_CREDENTIAL, HttpStatus.UNAUTHORIZED);
     }
   }
@@ -33,6 +35,7 @@ export class TokenHelper {
       if (data.type === type) return data;
       customThrowError(ResponseMessage.INVALID_CREDENTIAL, HttpStatus.UNAUTHORIZED);
     } catch (error) {
+      console.log(error)
       customThrowError(ResponseMessage.INVALID_CREDENTIAL, HttpStatus.UNAUTHORIZED);
     }
   }

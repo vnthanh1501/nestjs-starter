@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenHelper } from './common/helpers/token.helper';
+import { CategoryModule } from './modules/category/category.module';
 
 const env = process.env.NODE_ENV || 'development';
 const envFilePath =
@@ -28,14 +29,15 @@ const envFilePath =
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
           database:configService.get('DB_NAME'),
-          entities: ['src/**/**.entity{.ts,.js}'],
+          entities: ['src/modules/**/**.entity{.ts,.js}'],
+          synchronize: true,
         };
       },
       inject: [ConfigService],
     }),
     UserModule,
     AuthModule,
-    
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [ AppService, TokenHelper ],

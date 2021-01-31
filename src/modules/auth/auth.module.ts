@@ -4,8 +4,6 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '@app/modules/user/user.module';
-// import { ConfigModule } from '@app/config/config.module';
-// import { ConfigService } from '@app/config/config.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TokenHelper } from '@app/common/helpers/token.helper';
 

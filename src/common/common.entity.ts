@@ -5,8 +5,8 @@ import { ApiProperty } from '@nestjs/swagger';
 @Unique(['id'])
 export class Common {
   @ApiProperty()
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number
 
   @ApiProperty()
   @CreateDateColumn()

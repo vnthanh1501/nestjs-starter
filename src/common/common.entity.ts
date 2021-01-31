@@ -10,9 +10,9 @@ export class Common {
 
   @ApiProperty()
   @CreateDateColumn()
-  createdDate: Date;
+  createdAt: Date;
 
   @ApiProperty()
   @UpdateDateColumn()
-  updatedDate: Date;
+  updatedAt: Date;
 }

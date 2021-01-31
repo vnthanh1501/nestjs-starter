@@ -1,19 +1,21 @@
+import {
+  PaginationRequest,
+  PaginationResult,
+} from '@app/common/dto/Pagination.dto';
 import { customThrowError } from '@app/common/helpers/throw.helper';
 import { ResponseMessage } from '@app/common/langs/en';
-import {
-  BadRequestException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Raw, Repository } from 'typeorm';
 import { Category } from './category.entity';
+import { CategoryRepository } from './category.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @InjectRepository(Category) private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: CategoryRepository,
   ) {}
 
   async create(data: CreateCategoryDto, ownerId: number): Promise<Category> {
@@ -33,21 +35,44 @@ export class CategoryService {
     }
   }
 
-  async findAll(): Promise<Category[]> {
-    return await this.categoryRepository.find();
-  }
+  async list(
+    query: PaginationRequest<Category>,
+    ownerId: number
+  ): Promise<PaginationResult<Category>> {
+    const { skip, take, search, orderBy, orderDirection } = query;
 
-  async findOneById(id: string | number): Promise<Category> {
-    let category: Category;
-    try {
-      category = await this.categoryRepository.findOne(id);
-    } catch (error) {
-      throw new Error(error);
+    const options: FindManyOptions<Category> = {
+      skip,
+      take,
+    };
+
+    options.where = {};
+    if (ownerId) {
+      options.where = {
+        ownerId,
+      };
     }
-    if (!category) {
-      customThrowError(ResponseMessage.NOT_EXIST_USER, HttpStatus.NOT_FOUND);
+
+    if (search) {
+      options.where = {
+        ...options.where,
+        name: Raw(alias => `LOWER(${alias}) like '%${search.toLowerCase()}%'`),
+      };
     }
-    return category;
+
+    if (orderBy) {
+      options.order = {
+        [orderBy]: orderDirection,
+      };
+    }
+
+    const [data, count] = await this.categoryRepository.list(options);
+
+    return new PaginationResult<Category>(
+      // data.map(d => new Category(d)),
+      data,
+      count,
+    );
   }
 
   // async update(id: string, updateUserData: UpdateUserDto): Promise<Category> {
@@ -99,5 +124,4 @@ export class CategoryService {
   //   const updated = Object.assign(categoryToUpdate, updateUserData);
   //   return await this.categoryRepository.save(updated);
   // }
-
 }

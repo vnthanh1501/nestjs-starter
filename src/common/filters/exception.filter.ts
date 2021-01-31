@@ -19,7 +19,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest();
 
     // const loggedId = await this.logService.writeLog(exception, request);
-
+    console.log(exception)
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
